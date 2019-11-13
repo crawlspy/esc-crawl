@@ -63,7 +63,7 @@ const startCrawler = async function (urls) {
                     //=> 'Internal server error ...'
                 } finally {
                     if(body) {
-                        mkdirp(cdir,  async function (err) {
+                        mkdirp(cdir, function (err) {
                             if (err) console.error(err)
                             else {
                                 fs.writeFileSync(path.join(projectRoot, savePath), body);
