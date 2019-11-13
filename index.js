@@ -3,7 +3,6 @@ const got = require('got');
 const path = require('path');
 const url = require('url');
 const mkdirp = require('mkdirp');
-
 const config = require('./config');
 
 process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0;
@@ -14,6 +13,10 @@ const arrayUniq = array => [...new Set(array)];
 
 const projectRoot = path.join(__dirname, config.directory);
 
+
+const getEncode = (url)=> {
+    return /png|jpg|gif|eot|woff2?|ttf/.test(url) ? 'base64' : 'utf8'
+}
 
 const parseChild = (body, realUrl, urls)=> {
     let finds = [];
@@ -56,8 +59,11 @@ const startCrawler = async function (urls) {
                 let cdir = path.join(projectRoot, dirname);
                 let body = ''
                 try {
-                    const response = await got(realUrl);
+                    const response = await got(realUrl, { encoding: getEncode(realUrl)});
                     body = response.body;
+                    if(getEncode(realUrl) == 'base64') {
+                        body = new Buffer(body, 'base64');
+                    }
                 } catch (error) {
                     console.log('Not Found: '+  realUrl);
                     //=> 'Internal server error ...'
@@ -83,7 +89,7 @@ const startCrawler = async function (urls) {
             startCrawler(urls);
         }
     } else {
-        console.log('writed: ', writed);
+        fs.writeFileSync(path.join(projectRoot, 'writedlog.log'), writed.join('\n'));
     }
 }
 
