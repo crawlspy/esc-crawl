@@ -1,0 +1,15 @@
+{
+  "name": "esc-crawl",
+  "version": "1.0.0",
+  "description": "esc-crawl is a web spider, which you can custom RegExp to match the urls.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "got": "^9.6.0",
+    "mkdirp": "^0.5.1"
+  }
+}
