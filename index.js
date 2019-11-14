@@ -15,7 +15,7 @@ const projectRoot = path.join(__dirname, config.directory);
 
 
 const getEncode = (url)=> {
-    return /png|jpg|gif|eot|woff2?|ttf/.test(url) ? 'base64' : 'utf8'
+    return /png|cur|jpe?g|gif|eot|woff2?|ttf/.test(url) ? 'base64' : 'utf8'
 }
 
 const parseChild = (body, realUrl, urls)=> {
