@@ -89,7 +89,16 @@ const startCrawler = async function (urls) {
             startCrawler(urls);
         }
     } else {
-        fs.writeFileSync(path.join(projectRoot, 'writedlog.log'), writed.join('\n'));
+        if (config.captureSceenshot) {
+            const captureWebsite = require('capture-website');
+            await captureWebsite.file(config.base, path.join(projectRoot, 'screenshot.png'));
+        }
+        try {
+            fs.writeFileSync(path.join(projectRoot, 'writedlog.log'), writed.join('\n'));
+        } catch (error) {
+            console.log('Can not find anything.')
+        }
+        
     }
 }
 

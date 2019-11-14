@@ -9,6 +9,7 @@ const config = {
     // outputs 
     directory: './dist/googl',
     allowthirdDomain: false,
+    captureSceenshot: true, // capture screenshot for website
     // parse url recursive
     allowParseUrl: (url)=> { return /\.(htm|css)$/.test(url)},
     // match rules
