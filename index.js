@@ -14,9 +14,7 @@ const arrayUniq = array => [...new Set(array)];
 const projectRoot = path.join(__dirname, config.directory);
 
 
-const getEncode = (url)=> {
-    return /png|cur|jpe?g|gif|eot|woff2?|ttf/.test(url) ? 'base64' : 'utf8'
-}
+const getEncode = config.getEncode;
 
 const parseChild = (body, realUrl, urls)=> {
     let finds = [];
@@ -62,7 +60,7 @@ const startCrawler = async function (urls) {
                     const response = await got(realUrl, { encoding: getEncode(realUrl)});
                     body = response.body;
                     if(getEncode(realUrl) == 'base64') {
-                        body = new Buffer(body, 'base64');
+                        body = Buffer.from(body, 'base64');
                     }
                 } catch (error) {
                     console.log('Not Found: '+  realUrl);

@@ -12,6 +12,10 @@ const config = {
     captureSceenshot: true, // capture screenshot for website
     // parse url recursive
     allowParseUrl: (url)=> { return /\.(htm|css)$/.test(url)},
+    // buffer type 
+    getEncode: (url)=> {
+        return /png|cur|jpe?g|gif|eot|woff2?|ttf/.test(url) ? 'base64' : 'utf8'
+    },
     // match rules
     sources: [
         { callback:(body)=> {
