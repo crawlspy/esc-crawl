@@ -37,6 +37,9 @@ const parseChild = (body, realUrl, urls)=> {
                 let pu = url.resolve(realUrl, config.root + item)
                 return pu
             }
+            if(/^[a-zA-Z0-9]/.test(item)) {
+                return url.resolve(realUrl, item)
+            }
             return item
         })
     }
