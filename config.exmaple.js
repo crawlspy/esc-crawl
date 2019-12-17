@@ -16,7 +16,11 @@ const config = {
     getEncode: (url)=> {
         return /png|cur|jpe?g|gif|eot|woff2?|ttf/.test(url) ? 'base64' : 'utf8'
     },
+    userAgent: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.108 Safari/537.36",
     // match rules
+    bodyReplace: {
+        '/template/default/' : /__PUBLIC__\//g
+    },
     sources: [
         { callback:(body)=> {
             let u = [];

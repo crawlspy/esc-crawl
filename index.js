@@ -37,7 +37,7 @@ const parseChild = (body, realUrl, urls)=> {
                 let pu = url.resolve(realUrl, config.root + item)
                 return pu
             }
-            if(/^[a-zA-Z0-9]/.test(item)) {
+            if(/^[a-zA-Z0-9_-]/.test(item)) {
                 return url.resolve(realUrl, item)
             }
             return item
@@ -75,6 +75,14 @@ const startCrawler = async function (urls) {
                             else {
                                 fs.writeFileSync(path.join(projectRoot, savePath), body);
                                 writed.push(realUrl);
+                                if( config.bodyReplace ) {
+                                    for (const key in config.bodyReplace) {
+                                        if (object.hasOwnProperty(key)) {
+                                            const element = object[key];
+                                            body = body.replace(element, key);
+                                        }
+                                    }
+                                }
                                 urls = parseChild(body, realUrl, urls);
                                 startCrawler(urls);
                             }
@@ -93,7 +101,9 @@ const startCrawler = async function (urls) {
         try {
             if (config.captureSceenshot) {
                 const captureWebsite = require('capture-website');
-                await captureWebsite.file(config.base, path.join(projectRoot, 'screenshot.png'));
+                await captureWebsite.file(config.base, path.join(projectRoot, 'screenshot.png'),  {
+                    userAgent: config.userAgent
+                });
             }
             fs.writeFileSync(path.join(projectRoot, 'writedlog.log'), writed.join('\n'));
         } catch (error) {
