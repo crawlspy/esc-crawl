@@ -18,6 +18,18 @@ const getEncode = config.getEncode;
 
 const parseChild = (body, realUrl, urls)=> {
     let finds = [];
+    if ( config.bodyReplace ) {
+        let object = config.bodyReplace
+        for (const key in object) {
+            if (object.hasOwnProperty(key)) {
+                const element = object[key];
+                if(body && body.replace) {
+                    // utf-8 only string
+                    body = body.replace(element, key);
+                }
+            }
+        }
+    }
     if(config.allowParseUrl(realUrl)) {
         config.sources.map((item)=> {
             let u = item.callback(body);
@@ -75,14 +87,6 @@ const startCrawler = async function (urls) {
                             else {
                                 fs.writeFileSync(path.join(projectRoot, savePath), body);
                                 writed.push(realUrl);
-                                if( config.bodyReplace ) {
-                                    for (const key in config.bodyReplace) {
-                                        if (object.hasOwnProperty(key)) {
-                                            const element = object[key];
-                                            body = body.replace(element, key);
-                                        }
-                                    }
-                                }
                                 urls = parseChild(body, realUrl, urls);
                                 startCrawler(urls);
                             }
