@@ -10,7 +10,7 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "capture-website": "^0.8.0",
+    "capture-website": "^0.8.1",
     "got": "^9.6.0",
     "mkdirp": "^0.5.1"
   }
