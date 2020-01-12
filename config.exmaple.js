@@ -21,6 +21,11 @@ const config = {
     bodyReplace: {
         '/template/default/' : /__PUBLIC__\//g
     },
+
+    plugins: [
+        'bodyParse',
+        'cssUrlParse'
+    ],
     sources: [
         { callback:(body)=> {
             let u = [];

@@ -4,14 +4,27 @@ const path = require('path');
 const url = require('url');
 const mkdirp = require('mkdirp');
 const config = require('./config');
-
-process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0;
-
-
 const arrayUniq = array => [...new Set(array)];
 
+const urlResolve = (...args)=> {
+    return path.join.apply(null, [__dirname].concat(...args))
+}
 
-const projectRoot = path.join(__dirname, config.directory);
+process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0;
+const basename = path.basename(__filename);
+const distRoot = path.join(__dirname, config.directory);
+
+const plugins = {};
+
+fs
+  .readdirSync(urlResolve('plugins'))
+  .filter(file => {
+    return (file.indexOf('.') !== 0) && (file !== basename) && (file.slice(-3) === '.js') && config.plugins.includes(file.slice(0, -3));
+  })
+  .forEach(file => {
+    const plugin = require(urlResolve('plugins', file));
+    plugins[file] = plugin;
+  });
 
 
 const getEncode = config.getEncode;
@@ -37,7 +50,14 @@ const parseChild = (body, realUrl, urls)=> {
                 finds = finds.concat(u) 
             }
         })
+        for (const plugin in plugins) {
+            let u = plugins[plugin](body);
+            if(u) {
+                finds = finds.concat(u) 
+            }
+        }
     }
+
     if(finds.length) {
         // fix urls
         finds = finds.map(item => {
@@ -69,7 +89,7 @@ const startCrawler = async function (urls) {
             if(config.allowthirdDomain || realUrl.startsWith(config.base)) {
                 let savePath = realUrl.replace(config.base, '');
                 let dirname = path.dirname(savePath);
-                let cdir = path.join(projectRoot, dirname);
+                let cdir = path.join(distRoot, dirname);
                 let body = ''
                 try {
                     const response = await got(realUrl, { encoding: getEncode(realUrl)});
@@ -85,7 +105,7 @@ const startCrawler = async function (urls) {
                         mkdirp(cdir, function (err) {
                             if (err) console.error(err)
                             else {
-                                fs.writeFileSync(path.join(projectRoot, savePath), body);
+                                fs.writeFileSync(path.join(distRoot, savePath), body);
                                 writed.push(realUrl);
                                 urls = parseChild(body, realUrl, urls);
                                 startCrawler(urls);
@@ -105,11 +125,11 @@ const startCrawler = async function (urls) {
         try {
             if (config.captureSceenshot) {
                 const captureWebsite = require('capture-website');
-                await captureWebsite.file(config.base, path.join(projectRoot, 'screenshot.png'),  {
+                await captureWebsite.file(config.base, path.join(distRoot, 'screenshot.png'),  {
                     userAgent: config.userAgent
                 });
             }
-            fs.writeFileSync(path.join(projectRoot, 'writedlog.log'), writed.join('\n'));
+            fs.writeFileSync(path.join(distRoot, 'writedlog.log'), writed.join('\n'));
         } catch (error) {
             console.log('Can not find anything.')
         }
